@@ -19,14 +19,12 @@ package server
 import (
 	"context"
 	"crypto/tls"
-	"encoding/base64"
 	"fmt"
 	"net/http"
 	"time"
 
-
-	"github.com/aerogear/managed-services/pkg/broker/controller"
 	brokerapi "github.com/aerogear/managed-services/pkg/broker"
+	"github.com/aerogear/managed-services/pkg/broker/controller"
 	"github.com/aerogear/managed-services/pkg/broker/server/util"
 
 	"github.com/gorilla/mux"
@@ -68,18 +66,9 @@ func Run(ctx context.Context, addr string, c controller.Controller) error {
 // RunTLS creates the HTTPS handler based on an implementation of a
 // controller.Controller interface, and begins to listen on the specified address.
 func RunTLS(ctx context.Context, addr string, cert string, key string, c controller.Controller) error {
-	var decodedCert, decodedKey []byte
 	var tlsCert tls.Certificate
 	var err error
-	decodedCert, err = base64.StdEncoding.DecodeString(cert)
-	if err != nil {
-		return err
-	}
-	decodedKey, err = base64.StdEncoding.DecodeString(key)
-	if err != nil {
-		return err
-	}
-	tlsCert, err = tls.X509KeyPair(decodedCert, decodedKey)
+	tlsCert, err = tls.X509KeyPair([]byte(cert), []byte(key))
 	if err != nil {
 		return err
 	}
